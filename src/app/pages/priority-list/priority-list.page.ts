@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Priority, PriorityService } from 'src/app/services/priority.service';
 
 @Component({
   selector: 'app-priority-list',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PriorityListPage implements OnInit {
 
-  constructor() { }
+  private priorities: Observable<Priority[]>;
+
+  constructor(private priorityService: PriorityService) { }
 
   ngOnInit() {
+    this.priorities = this.priorityService.getPriorities();
   }
 
 }

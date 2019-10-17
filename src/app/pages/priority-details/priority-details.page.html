@@ -1,9 +1,51 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>priorityDetails</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Détails</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <ion-item>
+    <ion-label position="stacked">Titre</ion-label>
+    <ion-input [(ngModel)]="priority.titre"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Ordre</ion-label>
+    <ion-input [(ngModel)]="priority.ordre"></ion-input>
+  </ion-item>
+
 </ion-content>
+
+<ion-footer *ngIf="!priority.id">
+  <ion-toolbar color="success">
+    <ion-button expend="full" fill="clear" color="light" (click)="addPriority()">
+      <ion-icon name="checkmark" slot="start">
+        Ajouter
+      </ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
+
+<ion-footer *ngIf="priority.id">
+  <ion-row class="ion-no-padding ion-text-center">
+    <ion-col size="6">
+      <ion-button expend="block" fill="outline" color="danger" (click)="deletePriority()">
+        <ion-icon name="trash" slot="start">
+          Supprimer
+        </ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button expend="block" fill="solid" color="success" (click)="updatePriority()">
+        <ion-icon name="save" slot="start">
+          Modifier
+        </ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
