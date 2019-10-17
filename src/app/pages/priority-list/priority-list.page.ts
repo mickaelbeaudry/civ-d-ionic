@@ -9,7 +9,7 @@ import { Priority, PriorityService } from 'src/app/services/priority.service';
 })
 export class PriorityListPage implements OnInit {
 
-  private priorities: Observable<Priority[]>;
+  priorities: Observable<Priority[]>;
 
   constructor(private priorityService: PriorityService) { }
 
