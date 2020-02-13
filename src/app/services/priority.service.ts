@@ -21,7 +21,6 @@ export class PriorityService {
     this.priorities = this.priorityCollection.snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
-          console.log(a.payload.doc.data());
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
           return { id, ...data };
@@ -51,7 +50,6 @@ export class PriorityService {
 
   updatePriority(priority: Priority): Promise<void> {
     console.log('mod', priority)
-    console.log(priority.ordre);
     return this.priorityCollection.doc(priority.id).update({ ordre: priority.ordre, titre: priority.titre });
   }
 

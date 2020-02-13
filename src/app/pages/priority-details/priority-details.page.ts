@@ -14,7 +14,7 @@ export class PriorityDetailsPage implements OnInit {
     ordre: null,
     titre: ''
   }
-  
+
   id = null;
 
   constructor(
@@ -26,7 +26,7 @@ export class PriorityDetailsPage implements OnInit {
 
   ngOnInit() {
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
-    
+
   }
 
 
