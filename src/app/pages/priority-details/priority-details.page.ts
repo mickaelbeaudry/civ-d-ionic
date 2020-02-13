@@ -11,9 +11,10 @@ import { ToastController } from '@ionic/angular';
 export class PriorityDetailsPage implements OnInit {
 
   priority: Priority = {
-    ordre: '',
+    ordre: null,
     titre: ''
   }
+  
   id = null;
 
   constructor(
