@@ -14,10 +14,10 @@
     <ion-input [(ngModel)]="priority.titre"></ion-input>
   </ion-item>
 
-  <!-- <ion-item>
+  <ion-item *ngIf="priority.id">
     <ion-label position="stacked">Ordre</ion-label>
     <ion-input type="number" [(ngModel)]="priority.ordre"></ion-input>
-  </ion-item> -->
+  </ion-item>
 
 </ion-content>
 

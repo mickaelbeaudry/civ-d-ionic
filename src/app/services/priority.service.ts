@@ -84,6 +84,7 @@ export class PriorityService {
   }
 
   addPriority(priority: Priority): Promise<DocumentReference> {
+    priority.ordre = this.priorities.length + 1;
     console.log('add', priority)
     return this.priorityCollection.add(priority);
   }
@@ -95,6 +96,17 @@ export class PriorityService {
 
   deletePriority(id: string): Promise<void> {
     console.log('del', id)
+    let index = 0;
+    this.priorities.map(p => {
+      if(p.id == id) {
+        index = p.ordre;
+      }
+    });
+    this.priorities.forEach(p => {
+      if (p.ordre > index) {
+        this.priorityCollection.doc(p.id).update({ ordre: p.ordre - 1, titre: p.titre });
+      }
+    });
     return this.priorityCollection.doc(id).delete();
   }
 
