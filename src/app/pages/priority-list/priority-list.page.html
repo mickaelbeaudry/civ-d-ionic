@@ -15,7 +15,7 @@
     <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
       <ion-item button *ngFor="let priority of (priorities | async)" [routerLink]="['/priority', priority.id]">
         <ion-label>
-          {{ priority.ordre }}    {{ priority.titre }}
+          {{ priority.ordre }} - {{ priority.titre }}
         </ion-label>
         <ion-reorder slot="end"></ion-reorder>
       </ion-item>
