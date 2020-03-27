@@ -16,7 +16,12 @@ export class PriorityService {
   private priorities: Priority[] = [];
 
   constructor() {
-    
+    Parse.serverURL = 'https://civd.back4app.io'; // This is your Server URL
+    Parse.initialize(
+      '5wos5EyzRwqlg3QX0lbfyRWDzXDtIfbUesK8dL38', // This is your Application ID
+      'jdRTkckhJHXHjcv9svq5J7JJNS2l1HMIGBtWnf8i', // This is your Javascript key
+      'JCJmzJD5Hl133RgUx5pAKqKERjGUQJD002yCyqbo' // This is your Master key (never use it in the frontend)
+    );
     this.initPriorities();
   }
 
