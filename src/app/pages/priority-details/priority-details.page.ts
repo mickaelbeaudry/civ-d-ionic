@@ -10,10 +10,13 @@ import { ToastController } from '@ionic/angular';
 })
 export class PriorityDetailsPage implements OnInit {
 
-  priority: Priority = {
-    ordre: null,
-    titre: ''
-  }
+  priority = {
+    attributes: {
+      ordre: null,
+      titre: ''
+    },
+    id: ''
+  };
 
   id = null;
 
@@ -32,19 +35,21 @@ export class PriorityDetailsPage implements OnInit {
 
   ionViewWillEnter() {
     if (this.id) {
-      this.priorityService.getPriority(this.id).subscribe(p => {
-        this.priority = p;
+      this.priorityService.getPriority(this.id).then(p => {
+        this.priority.id = this.id;
+        this.priority.attributes.ordre = p[0].attributes.ordre;
+        this.priority.attributes.titre = p[0].attributes.titre;
       });
     }
   }
 
   addPriority() {
-    this.priorityService.addPriority(this.priority).then(() => {
+    this.priorityService.addPriority({ ordre: this.priority.attributes.ordre, titre: this.priority.attributes.titre }).then(() => {
       this.router.navigateByUrl('/');
       this.showToast('Priorité ajoutée');
     }, err => {
       this.showToast('Une erreur s\'est produite lors de l\'ajout.');
-    })
+    });
   }
 
   deletePriority() {
@@ -53,16 +58,17 @@ export class PriorityDetailsPage implements OnInit {
       this.showToast('Priorité supprimée');
     }, err => {
       this.showToast('Une erreur s\'est produite lors de la suppression.');
-    })
+    });
   }
 
   updatePriority() {
-    this.priorityService.updatePriority(this.priority).then(() => {
-      this.router.navigateByUrl('/');
-      this.showToast('Priorité modifiée');
-    }, err => {
-      this.showToast('Une erreur s\'est produite lors de la modification.');
-    })
+    this.priorityService.updatePriority(
+      { id: this.priority.id, titre: this.priority.attributes.titre, ordre: this.priority.attributes.ordre }).then(() => {
+        this.router.navigateByUrl('/');
+        this.showToast('Priorité modifiée');
+      }, err => {
+        this.showToast('Une erreur s\'est produite lors de la modification.');
+      });
   }
 
   showToast(msg) {

@@ -11,12 +11,12 @@
 
   <ion-item>
     <ion-label position="stacked">Titre</ion-label>
-    <ion-input [(ngModel)]="priority.titre"></ion-input>
+    <ion-input [(ngModel)]="priority.attributes.titre"></ion-input>
   </ion-item>
 
   <ion-item *ngIf="priority.id">
     <ion-label position="stacked">Ordre</ion-label>
-    <ion-input type="number" [(ngModel)]="priority.ordre"></ion-input>
+    <ion-input type="number" [(ngModel)]="priority.attributes.ordre"></ion-input>
   </ion-item>
 
 </ion-content>

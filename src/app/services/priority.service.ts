@@ -1,113 +1,148 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs';
+import { Parse } from 'parse';
 
 export interface Priority {
-  id?: string,
-  ordre: number,
-  titre: string
+  id?: string;
+  ordre: number;
+  titre: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class PriorityService {
-  private priorities$: Observable<Priority[]>;
-  private priorities: Priority[];
-  private priorityCollection: AngularFirestoreCollection<Priority>;
+  private priorities: Priority[] = [];
 
-  constructor(private afs: AngularFirestore) {
-    this.priorityCollection = this.afs.collection<Priority>('priorite', ref => ref.orderBy('ordre'));
-    this.priorities$ = this.priorityCollection.snapshotChanges().pipe(
-      map(actions => {
-        this.priorities = [];
-        return actions.map(a => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          this.priorities.push({ id, ...data });
-          // console.log({ id, data });
-          return { id, ...data };
-        });
-      })
-    );
-  };
+  constructor() {
+    
+    this.initPriorities();
+  }
 
   doReorder(from, to) {
 
-    let debut = 0;
-    let fin = 0;
-    let increment = 0;
-    
-    if (from > to) {
-      debut = to + 1;
-      fin = from + 1;
-      increment = 1;
-    } else if (from < to) {
-      increment = -1;
-      debut = from + 1;
-      fin = to + 1;
-    }
 
+    this.priorities.splice(to, 0, this.priorities.splice(from, 1)[0]);
+
+    let index = 0;
     this.priorities.forEach(p => {
-      if (p.ordre >= debut && p.ordre <= fin) {
-        this.priorityCollection.doc(p.id).update({ ordre: p.ordre + increment, titre: p.titre });
-      }
+        this.updateOrdreById(p.id, p.titre, index + 1);
+        index++;
     });
-    
-    let prio = this.priorities[from];
-    prio.ordre = this.priorities[to].ordre;
-    this.updatePriority(prio);
+
+
+    return this.priorities;
   }
 
   getOrdreById(id: string): Observable<number> {
-    return this.priorityCollection.doc<Priority>(id).valueChanges().pipe(
-      take(1),
-      map(priority => {
-        priority.id = id;
-        return priority.ordre;
-      }));
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    query.equalTo('objectId', id);
+    return query.find().then((results) => {
+      return results.attributes.ordre;
+    }, (error) => {
+      console.error('Error while fetching priorite', error);
+    });
   }
 
-  getPriorities(): Observable<Priority[]> {
-    return this.priorities$;
+  getPriorities(): Priority[] {
+    return this.priorities;
   }
 
-  getPriority(id: string): Observable<Priority> {
-    return this.priorityCollection.doc<Priority>(id).valueChanges().pipe(
-      take(1),
-      map(priority => {
-        priority.id = id;
-        return priority;
-      })
-    )
+  initPriorities(): Observable<Priority[]> {
+    this.priorities = [];
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    query.ascending('ordre');
+    return query.find().then((results) => {
+      results.forEach(element => {
+        this.priorities.push({
+          id: element.id,
+          titre: element.attributes.titre,
+          ordre: element.attributes.ordre
+        });
+      });
+      return results;
+    }, (error) => {
+      console.error('Error while fetching priorite', error);
+    });
   }
 
-  addPriority(priority: Priority): Promise<DocumentReference> {
+  getPriority(id: string) {
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    query.equalTo('objectId', id);
+    return query.find().then((results) => {
+      return results;
+    }, (error) => {
+      console.error('Error while fetching priorite', error);
+    });
+  }
+
+  addPriority(priority: Priority) {
     priority.ordre = this.priorities.length + 1;
-    console.log('add', priority)
-    return this.priorityCollection.add(priority);
+    const priorite = Parse.Object.extend('priorite');
+    const myNewObject = new priorite();
+
+    myNewObject.set('titre', priority.titre);
+    myNewObject.set('ordre', priority.ordre);
+
+    return myNewObject.save().then(
+      (result) => {
+      },
+      (error) => {
+        console.error('Error while creating priorite: ', error);
+      }
+    );
   }
 
   updatePriority(priority: Priority): Promise<void> {
-    console.log('mod', priority)
-    return this.priorityCollection.doc(priority.id).update({ ordre: priority.ordre, titre: priority.titre });
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    return query.get(priority.id).then((object) => {
+      object.set('titre', priority.titre);
+      object.set('ordre', priority.ordre);
+      object.save().then((response) => {
+      }, (error) => {
+        console.error('Error while updating priorite', error);
+      });
+    });
+  }
+
+  updateOrdreById(id: string, titre: string, ordre: number): Promise<void> {
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    return query.get(id).then((object) => {
+      object.set('titre', titre);
+      object.set('ordre', ordre);
+      object.save().then((response) => {
+      }, (error) => {
+        console.error('Error while updating priorite', error);
+      });
+    });
   }
 
   deletePriority(id: string): Promise<void> {
-    console.log('del', id)
     let index = 0;
     this.priorities.map(p => {
-      if(p.id == id) {
+      if (p.id === id) {
         index = p.ordre;
       }
     });
     this.priorities.forEach(p => {
       if (p.ordre > index) {
-        this.priorityCollection.doc(p.id).update({ ordre: p.ordre - 1, titre: p.titre });
+        this.updateOrdreById(p.id, p.titre, p.ordre - 1);
       }
     });
-    return this.priorityCollection.doc(id).delete();
+    const priorite = Parse.Object.extend('priorite');
+    const query = new Parse.Query(priorite);
+    return query.get(id).then((object) => {
+      object.destroy().then((response) => {
+      }, (error) => {
+        console.error('Error while deleting priorite', error);
+      });
+    });
   }
 
 }

@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 export class PriorityListPage implements OnInit {
   @ViewChild(IonReorderGroup, {static: false} ) reorderGroup: IonReorderGroup;
 
-  priorities: Observable<Priority[]>;
+  priorities: Priority[];
 
   constructor(private priorityService: PriorityService) { }
 
@@ -21,7 +21,7 @@ export class PriorityListPage implements OnInit {
     // when the drag started and ended, respectively
     console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
 
-    this.priorityService.doReorder(ev.detail.from, ev.detail.to);
+    this.priorities = this.priorityService.doReorder(ev.detail.from, ev.detail.to);
 
     // Finish the reorder and position the item in the DOM based on
     // where the gesture ended. This method can also be called directly
