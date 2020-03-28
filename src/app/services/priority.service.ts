@@ -22,12 +22,9 @@ export class PriorityService {
       'jdRTkckhJHXHjcv9svq5J7JJNS2l1HMIGBtWnf8i', // This is your Javascript key
       'JCJmzJD5Hl133RgUx5pAKqKERjGUQJD002yCyqbo' // This is your Master key (never use it in the frontend)
     );
-    this.initPriorities();
   }
 
   doReorder(from, to) {
-
-
     this.priorities.splice(to, 0, this.priorities.splice(from, 1)[0]);
 
     let index = 0;
@@ -35,9 +32,6 @@ export class PriorityService {
         this.updateOrdreById(p.id, p.titre, index + 1);
         index++;
     });
-
-
-    return this.priorities;
   }
 
   getOrdreById(id: string): Observable<number> {
@@ -51,11 +45,7 @@ export class PriorityService {
     });
   }
 
-  getPriorities(): Priority[] {
-    return this.priorities;
-  }
-
-  initPriorities(): Observable<Priority[]> {
+  getPriorities(): Observable<Priority[]> {
     this.priorities = [];
     const priorite = Parse.Object.extend('priorite');
     const query = new Parse.Query(priorite);
@@ -68,7 +58,7 @@ export class PriorityService {
           ordre: element.attributes.ordre
         });
       });
-      return results;
+      return this.priorities;
     }, (error) => {
       console.error('Error while fetching priorite', error);
     });
