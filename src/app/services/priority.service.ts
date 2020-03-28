@@ -34,17 +34,6 @@ export class PriorityService {
     });
   }
 
-  getOrdreById(id: string): Observable<number> {
-    const priorite = Parse.Object.extend('priorite');
-    const query = new Parse.Query(priorite);
-    query.equalTo('objectId', id);
-    return query.find().then((results) => {
-      return results.attributes.ordre;
-    }, (error) => {
-      console.error('Error while fetching priorite', error);
-    });
-  }
-
   getPriorities(): Observable<Priority[]> {
     this.priorities = [];
     const priorite = Parse.Object.extend('priorite');

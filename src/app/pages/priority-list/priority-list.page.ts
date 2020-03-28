@@ -32,7 +32,6 @@ export class PriorityListPage implements OnInit {
     console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
 
     this.priorityService.doReorder(ev.detail.from, ev.detail.to);
-    this.priorities = this.priorityService.getPriorities();
 
     // Finish the reorder and position the item in the DOM based on
     // where the gesture ended. This method can also be called directly
